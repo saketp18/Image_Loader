@@ -1,8 +1,9 @@
 package com.lite.imageloader.loader;
 
+import android.util.Log;
+
 import com.lite.imageloader.utils.Constants;
 
-import java.io.IOException;
 import java.io.InputStream;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
@@ -21,9 +22,6 @@ public class NetworkInstance {
     private static Retrofit _retrofit;
     private static NetworkResponse networkResponse;
 
-    public NetworkInstance() {
-    }
-
     public NetworkInstance(NetworkResponse network){
         networkResponse = (NetworkResponse)network;
     }
@@ -33,47 +31,52 @@ public class NetworkInstance {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor()
                                                     .setLevel(HttpLoggingInterceptor.Level.BODY);
             OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-            _retrofit = new Retrofit.Builder().baseUrl(Constants.BASE_URL).client(client)
+            _retrofit = new Retrofit.Builder().baseUrl(Constants.BASE).client(client)
                             .addConverterFactory(GsonConverterFactory.create()).build();
         }
         return _retrofit;
     }
 
-    public LoadImages load(String url, int key){
-       return new LoadImages(url);
+    public void load(String url){
+        final String urls = url;
+        NetworkRequest clients = getInstance().create(NetworkRequest.class);
+        Call<ResponseBody> call = clients.load(url);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    networkResponse.onSuccess(response.body().byteStream(), urls);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                networkResponse.onFailure();
+            }
+        });
     }
 
-    public class LoadImages implements Runnable{
-        public LoadImages(String url) {}
+    /*public class LoadImages implements Runnable{
+        String url = null;
+        public LoadImages(String url) {
+            this.url = url;
+        }
 
         @Override
         public void run() {
-            NetworkRequest clients = getInstance().create(NetworkRequest.class);
-            Call<ResponseBody> call = clients.load(Constants.URL);
-            try {
-                InputStream in = call.execute().body().byteStream();
-                networkResponse.onSuccess(in, Constants.URL, 1);
-            }catch (IOException e){
-                networkResponse.onFailure();
-            }
-            /*call.enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if(response.isSuccessful()){
-                        networkResponse.onSuccess(response.body().byteStream(), Constants.URL, 1);
-                    }
-                }
 
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    networkResponse.onFailure();
-                }
-            });*/
+            *//*try {
+                InputStream in = call.execute().body().byteStream();
+                networkResponse.onSuccess(in, url);
+            }catch (IOException e){
+                Log.d("Saket","Failure!");
+                networkResponse.onFailure();
+            }*//*
         }
-    }
+    }*/
 
     public interface NetworkResponse{
-        public void onSuccess(InputStream responseBody, String keys, int key);
+        public void onSuccess(InputStream responseBody, String keys);
         public void onFailure();
     }
 }

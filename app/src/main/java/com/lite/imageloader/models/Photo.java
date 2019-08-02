@@ -1,4 +1,4 @@
-package com.lite.imageloader.unplashloader;
+package com.lite.imageloader.models;
 
 /**
  * Created by Saket on 02,August,2019

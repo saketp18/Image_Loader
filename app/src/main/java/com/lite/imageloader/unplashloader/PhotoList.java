@@ -1,5 +1,7 @@
 package com.lite.imageloader.unplashloader;
 
+import com.lite.imageloader.models.Photo;
+
 import java.util.List;
 
 import retrofit2.Call;

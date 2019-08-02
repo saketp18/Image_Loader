@@ -1,30 +1,34 @@
 package com.lite.imageloader.loader;
 
 import android.app.Activity;
+import androidx.annotation.NonNull;
 
 /**
  * Created by Saket on 02,August,2019
  */
-public class ImageLoaderApp {
+public class ImageLoaderApp{
 
 
     private static ImageLoader _imageLoad;
+
+    public ImageLoaderApp() {
+    }
 
     public ImageLoaderApp get(Activity context){
         _imageLoad = new ImageLoader(context);
         return this;
     }
-    public ImageLoaderApp load(String url){
-        _imageLoad.load(url);
+    public ImageLoaderApp load(@NonNull String url){
+        _imageLoad.loads(url);
         return this;
     }
 
-    public ImageLoaderApp addMemCache(boolean isCached){
-        _imageLoad.addMemCache(isCached);
+    public ImageLoaderApp addMemCache(){
+        _imageLoad.addMemCaches();
         return this;
     }
 
-    public ImageLoaderApp addDiskCache(boolean isCache){
+    public ImageLoaderApp addDiskCache(){
 
         return this;
     }
@@ -32,5 +36,9 @@ public class ImageLoaderApp {
     public ImageLoaderApp build(){
         ImageLoaderApp im = new ImageLoaderApp();
         return im;
+    }
+
+    public void clearCache(){
+        _imageLoad.clearMemCache();
     }
 }

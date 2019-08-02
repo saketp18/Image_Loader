@@ -11,7 +11,7 @@ public class CacheRequest {
     private final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
     private final int cacheSize = maxMemory / 8;
     private LruCache<String, Bitmap> memoryCache;
-    private boolean isCache = false;
+    private static boolean isCache = false;
 
     protected void init() {
         memoryCache = new LruCache<String, Bitmap>(cacheSize) {
@@ -22,18 +22,26 @@ public class CacheRequest {
         };
     }
 
-    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-        if (getBitmapFromMemCache(key) == null && isCache) {
+    protected void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(key) == null) {
             memoryCache.put(key, bitmap);
         }
     }
 
-    public Bitmap getBitmapFromMemCache(String key) {
+    protected Bitmap getBitmapFromMemCache(String key) {
         return memoryCache.get(key);
     }
 
-    public void addBitmap(boolean isCache){
-        this.isCache = isCache;
+    protected boolean getIsCache(){
+        return isCache;
+    }
+
+    protected void addMemCache(){
+        isCache = true;
+    }
+
+    protected void clearCache(){
+        memoryCache.evictAll();
     }
 
     protected LruCache<String, Bitmap> getMemoryCache(){
