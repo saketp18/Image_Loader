@@ -44,9 +44,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ImageH
     }
 
 
+    //Our Item count as of now not dynamic.
     @Override
     public int getItemCount() {
-        return 10;
+        return 100;
     }
 
     public class ImageHolder extends RecyclerView.ViewHolder{

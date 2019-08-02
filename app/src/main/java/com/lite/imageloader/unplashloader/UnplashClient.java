@@ -24,7 +24,7 @@ public class UnplashClient {
     public static Retrofit getUnplashClient(){
         if(retrofit == null){
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor()
-                    .setLevel(HttpLoggingInterceptor.Level.BODY);
+                    .setLevel(HttpLoggingInterceptor.Level.NONE);
             OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor)
                                         .addInterceptor(new Interceptor() {
                                             @Override

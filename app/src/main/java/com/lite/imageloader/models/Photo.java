@@ -9,6 +9,14 @@ public class Photo {
     private Integer height;
     private Urls urls;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public Urls getUrls() {
         return urls;
     }

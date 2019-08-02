@@ -8,9 +8,7 @@ import androidx.annotation.NonNull;
  */
 public class ImageLoaderApp{
 
-
-    private static ImageLoader _imageLoad;
-
+    private ImageLoader _imageLoad;
     public ImageLoaderApp() {
     }
 
@@ -18,8 +16,8 @@ public class ImageLoaderApp{
         _imageLoad = new ImageLoader(context);
         return this;
     }
-    public ImageLoaderApp load(@NonNull String url){
-        _imageLoad.loads(url);
+    public ImageLoaderApp load(@NonNull String url, @NonNull String key){
+        _imageLoad.loads(url, key);
         return this;
     }
 
@@ -29,6 +27,12 @@ public class ImageLoaderApp{
     }
 
     public ImageLoaderApp addDiskCache(){
+        _imageLoad.addDiskCaches();
+        return this;
+    }
+
+    public ImageLoaderApp cancel(){
+        _imageLoad.cancel();
 
         return this;
     }
@@ -40,5 +44,10 @@ public class ImageLoaderApp{
 
     public void clearCache(){
         _imageLoad.clearMemCache();
+    }
+
+
+    public void clearDiskCache(){
+        _imageLoad.clearDiskCache();
     }
 }

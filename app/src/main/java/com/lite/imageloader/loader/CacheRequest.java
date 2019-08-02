@@ -9,8 +9,8 @@ import android.util.LruCache;
 public class CacheRequest {
 
     private final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-    private final int cacheSize = maxMemory / 8;
-    private LruCache<String, Bitmap> memoryCache;
+    private final int cacheSize = maxMemory;
+    private static LruCache<String, Bitmap> memoryCache; // static will stick the images for certain period of time.
     private static boolean isCache = false;
 
     protected void init() {

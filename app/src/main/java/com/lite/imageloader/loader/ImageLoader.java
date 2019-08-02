@@ -4,9 +4,15 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+
+import com.lite.imageloader.utils.Constants;
+
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
 
 
 /**
@@ -16,16 +22,15 @@ public class ImageLoader implements NetworkInstance.NetworkResponse {
 
     private NetworkInstance _netwoNetworkInstance;
     private CacheRequest _caheCacheRequest;
+    private DiskLruCacheRequest _diskLruCacheRequest;
     private ExecutorService mExecutorService;
     private BitmapListener _bitmBitmapListener;
-
-    public ImageLoader() {
-    }
 
     public ImageLoader(Activity context){
         _bitmBitmapListener = (BitmapListener)context;
         _netwoNetworkInstance = new NetworkInstance(this);
         _caheCacheRequest = new CacheRequest();
+        _diskLruCacheRequest = new DiskLruCacheRequest(context, "image_loader", Constants.DEFAULT_DISK_CACHE_SIZE,Bitmap.CompressFormat.JPEG,70);
         mExecutorService = Executors.newFixedThreadPool(5);
         init();
     }
@@ -34,9 +39,14 @@ public class ImageLoader implements NetworkInstance.NetworkResponse {
         _caheCacheRequest.init();
     }
 
-    protected void loads(String url){
-        if(_caheCacheRequest.getBitmapFromMemCache(url)==null)
-           _netwoNetworkInstance.load(url);
+    protected void loads(String url, String key) {
+        if (_caheCacheRequest.getBitmapFromMemCache(key) == null && !_diskLruCacheRequest.containsKey(key)){
+            _netwoNetworkInstance.load(url, key);
+        }else if(_caheCacheRequest.getBitmapFromMemCache(key)!=null){
+            onSuccess(_caheCacheRequest.getBitmapFromMemCache(key));
+        }else{
+            onSuccess(_diskLruCacheRequest.getBitmap(key));
+        }
     }
 
     protected void addMemCaches(){
@@ -46,21 +56,40 @@ public class ImageLoader implements NetworkInstance.NetworkResponse {
     protected void clearMemCache(){
         _caheCacheRequest.clearCache();
     }
+
+    protected void addDiskCaches(){
+        _diskLruCacheRequest.addDiskCache();
+    }
+
+    protected void clearDiskCache(){
+        _diskLruCacheRequest.clearCache();
+    }
+
+    protected void cancel(){
+        _netwoNetworkInstance.cancel();
+    }
+
     @Override
-    public void onSuccess(InputStream inputStream, String url) {
+    public void onSuccess(InputStream inputStream, String url, String key) {
 
         Bitmap bmp = BitmapFactory.decodeStream(inputStream);
-        if(_caheCacheRequest.getIsCache())
-            _caheCacheRequest.addBitmapToMemoryCache(url, bmp);
+        if(_caheCacheRequest.getIsCache()) {
+            _caheCacheRequest.addBitmapToMemoryCache(key, bmp);
+        }
+        if(_diskLruCacheRequest.isCache()){
+            _diskLruCacheRequest.addBitmapDiskCache(key, bmp);
+        }
         _bitmBitmapListener.onBitmapReady(bmp);
     }
 
-
+    public void onSuccess(Bitmap bmp){
+        _bitmBitmapListener.onBitmapReady(bmp);
+    }
 
     @Override
-    public void onFailure() {
+    public void onFailure(Call<ResponseBody> call, Throwable t) {
         Log.d("SaketResponse", "Failed!!");
-        _bitmBitmapListener.onBitmapFailure();
+        _bitmBitmapListener.onBitmapFailure(call,t);
     }
 
     //Use this scale method when you are needed to downscale a large image.
@@ -76,6 +105,6 @@ public class ImageLoader implements NetworkInstance.NetworkResponse {
 
     public interface BitmapListener{
         public void onBitmapReady(Bitmap bitmap);
-        public void onBitmapFailure();
+        public void onBitmapFailure(Call<ResponseBody> call, Throwable t);
     }
 }
