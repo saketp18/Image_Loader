@@ -31,7 +31,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements ImageLoader.BitmapListener, RecyclerAdapter.ItemClickListener {
-    private ImageLoaderApp imageLoaderApp;
     private RecyclerView mRecyclerView;
     private RecyclerAdapter mAdapter;
     private MainActivity _instance;
@@ -81,7 +80,6 @@ public class MainActivity extends AppCompatActivity implements ImageLoader.Bitma
                                 .build();
                     }
                 }
-                mProgess.setVisibility(View.GONE);
             }
 
             @Override
@@ -110,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements ImageLoader.Bitma
 
     @Override
     public void onBitmapReady(Bitmap bitmap) {
+        mProgess.setVisibility(View.GONE);
         bitmaps.add(bitmap);
         mAdapter.setData(bitmaps);
         mAdapter.notifyDataSetChanged();

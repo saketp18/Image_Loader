@@ -23,31 +23,33 @@ public class NetworkInstance {
     private Call<ResponseBody> call;
     private String urls;
     private String keys;
+    private static NetworkRequest clients;
 
     public NetworkInstance(NetworkResponse network) {
         networkResponse = (NetworkResponse)network;
     }
 
-    private static Retrofit getInstance() {
-        if (_retrofit == null) {
+    private static NetworkRequest getInstance() {
+        if (clients == null) {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor()
                     .setLevel(HttpLoggingInterceptor.Level.NONE);
             OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
             _retrofit = new Retrofit.Builder().baseUrl(Constants.BASE).client(client)
                     .addConverterFactory(GsonConverterFactory.create()).build();
+            clients = _retrofit.create(NetworkRequest.class);
         }
-        return _retrofit;
+        return clients;
     }
 
     protected void load(String url, String key) {
         this.urls = url;
         this.keys = key;
-        NetworkRequest clients = getInstance().create(NetworkRequest.class);
+        getInstance();
         call = clients.load(url);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful() && !call.isCanceled()) {
+                if (response.isSuccessful()) {
                     networkResponse.onSuccess(response.body().byteStream(), urls, keys);
                 }
             }
