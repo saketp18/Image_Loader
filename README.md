@@ -23,27 +23,36 @@ Application Flow
 - Images are selected are opened in full screen using Fragments.
 
 
-Code Structure.
+Code Structure(packages)
+
 -disklrucache
     Boilerplatecode for  implementation of DiskLruCache.
+    
 -loader -->This is library which is made for custom request.
+
     |------CacheRequest --> This class is for caching bitmaps in memory level.
     |------DiskLruCacheRequest --> This class is for caching bitmaps in disk level.
     |------NetworkInstance --> This class is for querying images based on url.
     |------ImageLoaderApp --> This class is builder class for requests made from MainActivity
 -models
+
     |------Photo, Urls --> Model class for response from www.unsplash.com.
+    
 -unplashloader --> This package is for requesting  from www.unsplash.com using retrofit2.
--utils
+
 --ImageFragment --> Displaying image from list in full screen.
+
 --MainActivity --> This is presenter class which binds model class and views.
 
 
 ImageLoaderApp class is main class for querying bitmaps from URL. This builder class has api for MainActivity such as:
 
 get(Context) -> For Initialization of helper classes. 
+
 load(String url) -> To load from bitmaps from URL.
+
 addMemCache() -> Call this function if Bitmap needs to be cached in memory.
+
 addDiskCache() -> Call this function if Bitmap needs to be cached in disk.
 
 # Deep Dive
