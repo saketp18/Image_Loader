@@ -1,53 +1,58 @@
 package com.lite.imageloader.loader;
 
 import android.app.Activity;
+
 import androidx.annotation.NonNull;
 
 /**
  * Created by Saket on 02,August,2019
  */
-public class ImageLoaderApp{
+public class ImageLoaderApp {
 
     private ImageLoader _imageLoad;
+
     public ImageLoaderApp() {
     }
 
-    public ImageLoaderApp get(Activity context){
+    public ImageLoaderApp get(Activity context) {
         _imageLoad = new ImageLoader(context);
         return this;
     }
-    public ImageLoaderApp load(@NonNull String url, @NonNull String key){
+
+    public ImageLoaderApp load(@NonNull String url, @NonNull String key) {
         _imageLoad.loads(url, key);
         return this;
     }
 
-    public ImageLoaderApp addMemCache(){
+    public ImageLoaderApp addMemCache() {
         _imageLoad.addMemCaches();
         return this;
     }
 
-    public ImageLoaderApp addDiskCache(){
+    public ImageLoaderApp addDiskCache() {
         _imageLoad.addDiskCaches();
         return this;
     }
 
-    public ImageLoaderApp cancel(){
-        _imageLoad.cancel();
-
+    public ImageLoaderApp cancel() {
+        if (_imageLoad != null)
+            _imageLoad.cancel();
         return this;
     }
 
-    public ImageLoaderApp build(){
+    public ImageLoaderApp build() {
         ImageLoaderApp im = new ImageLoaderApp();
         return im;
     }
 
-    public void clearCache(){
-        _imageLoad.clearMemCache();
+    public void clearCache() {
+        if (_imageLoad != null)
+            _imageLoad.clearMemCache();
     }
 
 
-    public void clearDiskCache(){
-        _imageLoad.clearDiskCache();
+    public void clearDiskCache() {
+        if (_imageLoad != null)
+            _imageLoad.clearDiskCache();
     }
 }

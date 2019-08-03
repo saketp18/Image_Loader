@@ -26,46 +26,46 @@ public class ImageLoader implements NetworkInstance.NetworkResponse {
     private ExecutorService mExecutorService;
     private BitmapListener _bitmBitmapListener;
 
-    public ImageLoader(Activity context){
-        _bitmBitmapListener = (BitmapListener)context;
+    public ImageLoader(Activity context) {
+        _bitmBitmapListener = (BitmapListener) context;
         _netwoNetworkInstance = new NetworkInstance(this);
         _caheCacheRequest = new CacheRequest();
-        _diskLruCacheRequest = new DiskLruCacheRequest(context, "image_loader", Constants.DEFAULT_DISK_CACHE_SIZE,Bitmap.CompressFormat.JPEG,70);
+        _diskLruCacheRequest = new DiskLruCacheRequest(context, "image_loader", Constants.DEFAULT_DISK_CACHE_SIZE, Bitmap.CompressFormat.JPEG, 70);
         mExecutorService = Executors.newFixedThreadPool(5);
         init();
     }
 
-    protected void init(){
+    protected void init() {
         _caheCacheRequest.init();
     }
 
     protected void loads(String url, String key) {
-        if (_caheCacheRequest.getBitmapFromMemCache(key) == null && !_diskLruCacheRequest.containsKey(key)){
+        if (_caheCacheRequest.getBitmapFromMemCache(key) == null && !_diskLruCacheRequest.containsKey(key)) {
             _netwoNetworkInstance.load(url, key);
-        }else if(_caheCacheRequest.getBitmapFromMemCache(key)!=null){
+        } else if (_caheCacheRequest.getBitmapFromMemCache(key) != null) {
             onSuccess(_caheCacheRequest.getBitmapFromMemCache(key));
-        }else{
+        } else {
             onSuccess(_diskLruCacheRequest.getBitmap(key));
         }
     }
 
-    protected void addMemCaches(){
+    protected void addMemCaches() {
         _caheCacheRequest.addMemCache();
     }
 
-    protected void clearMemCache(){
+    protected void clearMemCache() {
         _caheCacheRequest.clearCache();
     }
 
-    protected void addDiskCaches(){
+    protected void addDiskCaches() {
         _diskLruCacheRequest.addDiskCache();
     }
 
-    protected void clearDiskCache(){
+    protected void clearDiskCache() {
         _diskLruCacheRequest.clearCache();
     }
 
-    protected void cancel(){
+    protected void cancel() {
         _netwoNetworkInstance.cancel();
     }
 
@@ -73,23 +73,23 @@ public class ImageLoader implements NetworkInstance.NetworkResponse {
     public void onSuccess(InputStream inputStream, String url, String key) {
 
         Bitmap bmp = BitmapFactory.decodeStream(inputStream);
-        if(_caheCacheRequest.getIsCache()) {
+        if (_caheCacheRequest.getIsCache()) {
             _caheCacheRequest.addBitmapToMemoryCache(key, bmp);
         }
-        if(_diskLruCacheRequest.isCache()){
+        if (_diskLruCacheRequest.isCache()) {
             _diskLruCacheRequest.addBitmapDiskCache(key, bmp);
         }
         _bitmBitmapListener.onBitmapReady(bmp);
     }
 
-    public void onSuccess(Bitmap bmp){
+    public void onSuccess(Bitmap bmp) {
         _bitmBitmapListener.onBitmapReady(bmp);
     }
 
     @Override
     public void onFailure(Call<ResponseBody> call, Throwable t) {
         Log.d("SaketResponse", "Failed!!");
-        _bitmBitmapListener.onBitmapFailure(call,t);
+        _bitmBitmapListener.onBitmapFailure(call, t);
     }
 
     //Use this scale method when you are needed to downscale a large image.
@@ -103,8 +103,9 @@ public class ImageLoader implements NetworkInstance.NetworkResponse {
         return output;
     }*/
 
-    public interface BitmapListener{
-        public void onBitmapReady(Bitmap bitmap);
-        public void onBitmapFailure(Call<ResponseBody> call, Throwable t);
+    public interface BitmapListener {
+        void onBitmapReady(Bitmap bitmap);
+
+        void onBitmapFailure(Call<ResponseBody> call, Throwable t);
     }
 }

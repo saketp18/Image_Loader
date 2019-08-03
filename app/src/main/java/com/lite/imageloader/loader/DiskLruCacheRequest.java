@@ -29,6 +29,7 @@ public class DiskLruCacheRequest {
     private Bitmap.CompressFormat mCompressFormat = Bitmap.CompressFormat.JPEG;
     private int mCompressQuality = 70;
     private boolean isCache = false;
+
     public DiskLruCacheRequest(Context context, String uniqueName, int diskCacheSize,
                                Bitmap.CompressFormat compressFormat, int quality) {
         try {
@@ -159,10 +160,11 @@ public class DiskLruCacheRequest {
         }
     }
 
-    protected void addDiskCache(){
+    protected void addDiskCache() {
         isCache = true;
     }
-    protected boolean isCache(){
+
+    protected boolean isCache() {
         return isCache;
     }
 

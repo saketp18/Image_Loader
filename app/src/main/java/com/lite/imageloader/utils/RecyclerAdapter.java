@@ -23,10 +23,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ImageH
 
     public RecyclerAdapter(Context context) {
         this.mContext = context;
-        itemClickListener = (ItemClickListener)context;
+        itemClickListener = (ItemClickListener) context;
     }
 
-    public void setData(ArrayList<Bitmap> bitmaps){
+    public void setData(ArrayList<Bitmap> bitmaps) {
         this.bitmaps = bitmaps;
     }
     @NonNull
@@ -40,8 +40,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ImageH
     @Override
     public void onBindViewHolder(@NonNull ImageHolder holder, final int position) {
         holder.imView.setImageDrawable(mContext.getDrawable(R.drawable.ic_launcher_background));
-        if(bitmaps!=null && bitmaps.size() > position) {
-               holder.imView.setImageBitmap(bitmaps.get(position));
+        if (bitmaps != null && bitmaps.size() > position) {
+            holder.imView.setImageBitmap(bitmaps.get(position));
         }
         holder.imView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,15 +61,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ImageH
             return 0;
     }
 
-    public class ImageHolder extends RecyclerView.ViewHolder{
-        public ImageView imView;
-        public ImageHolder(View imageView){
-            super(imageView);
-            this.imView = (ImageView)imageView.findViewById(R.id.imView);
-        }
+    public interface ItemClickListener {
+        void onClickListener(int position);
     }
 
-    public interface ItemClickListener{
-        public void onClickListener(int position);
+    public class ImageHolder extends RecyclerView.ViewHolder {
+        public ImageView imView;
+
+        public ImageHolder(View imageView) {
+            super(imageView);
+            this.imView = imageView.findViewById(R.id.imView);
+        }
     }
 }

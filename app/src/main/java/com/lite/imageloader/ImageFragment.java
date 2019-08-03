@@ -19,6 +19,7 @@ import com.lite.imageloader.utils.BitmapResponse;
 public class ImageFragment extends Fragment {
 
     private Bitmap bmp;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
