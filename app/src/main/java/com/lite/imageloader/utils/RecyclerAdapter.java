@@ -19,9 +19,11 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ImageH
 
     private Context mContext;
     private ArrayList<Bitmap> bitmaps;
+    private ItemClickListener itemClickListener;
 
     public RecyclerAdapter(Context context) {
         this.mContext = context;
+        itemClickListener = (ItemClickListener)context;
     }
 
     public void setData(ArrayList<Bitmap> bitmaps){
@@ -36,18 +38,27 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ImageH
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ImageHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ImageHolder holder, final int position) {
         holder.imView.setImageDrawable(mContext.getDrawable(R.drawable.ic_launcher_background));
         if(bitmaps!=null && bitmaps.size() > position) {
                holder.imView.setImageBitmap(bitmaps.get(position));
         }
+        holder.imView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                itemClickListener.onClickListener(position);
+            }
+        });
     }
 
 
-    //Our Item count as of now not dynamic.
+    //Our Item count is constant because not unware how many items to be loaded.
     @Override
     public int getItemCount() {
-        return 100;
+        if(bitmaps !=null)
+            return bitmaps.size();
+        else
+            return 0;
     }
 
     public class ImageHolder extends RecyclerView.ViewHolder{
@@ -56,5 +67,9 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ImageH
             super(imageView);
             this.imView = (ImageView)imageView.findViewById(R.id.imView);
         }
+    }
+
+    public interface ItemClickListener{
+        public void onClickListener(int position);
     }
 }

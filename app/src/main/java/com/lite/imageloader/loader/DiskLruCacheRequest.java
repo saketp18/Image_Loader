@@ -125,11 +125,6 @@ public class DiskLruCacheRequest {
                 snapshot.close();
             }
         }
-
-        if (BuildConfig.DEBUG) {
-            Log.d("cache_test_DISK_", bitmap == null ? "" : "image read from disk " + key);
-        }
-
         return bitmap;
 
     }

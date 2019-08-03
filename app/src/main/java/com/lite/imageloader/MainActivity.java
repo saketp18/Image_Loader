@@ -2,12 +2,12 @@ package com.lite.imageloader;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +17,8 @@ import com.lite.imageloader.models.Photo;
 import com.lite.imageloader.unplashloader.PhotoList;
 import com.lite.imageloader.unplashloader.UnplashClient;
 import com.lite.imageloader.utils.RecyclerAdapter;
+import com.lite.imageloader.utils.BitmapResponse;
+
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements ImageLoader.BitmapListener{
+public class MainActivity extends AppCompatActivity implements ImageLoader.BitmapListener, RecyclerAdapter.ItemClickListener {
     private ImageLoaderApp imageLoaderApp;
     private RecyclerView mRecyclerView;
     private RecyclerAdapter mAdapter;
@@ -61,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements ImageLoader.Bitma
 
     public void loadPhotos() {
         PhotoList list = UnplashClient.getUnplashClient().create(PhotoList.class);
-        call = list.getPhotos(2, 100);
+        call = list.getPhotos(2, 30);
         call.enqueue(new Callback<List<Photo>>() {
             @Override
             public void onResponse(Call<List<Photo>> call, Response<List<Photo>> response) {
@@ -110,5 +112,21 @@ public class MainActivity extends AppCompatActivity implements ImageLoader.Bitma
         if(t instanceof SocketTimeoutException){
             Toast.makeText(getApplicationContext(), "Time out, Please check internet!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onClickListener(int position) {
+        Bitmap bmp = bitmaps.get(position);
+        int sync = BitmapResponse.get().setLargeData(bmp);
+        //So the idea was to pass a reference code that only ImageFragment would have.
+        // That would ensure that it is retrieving the correct object reference from the singleton.
+        // Otherwise, null will be returned which should be handled by fail-safe methods.
+        Bundle bundle = new Bundle();
+        bundle.putInt("bitmap", sync);
+        ImageFragment imageFragment = new ImageFragment();
+        imageFragment.setArguments(bundle);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.container, imageFragment).addToBackStack(null);
+        transaction.commit();
     }
 }
