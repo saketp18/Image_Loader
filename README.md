@@ -2,9 +2,9 @@
  
  Objective of this app is to build a basic library for performing following functions:
  
- -Asynchronous Image loading
- -Memory Level caching
- -Disk Level caching.
+ - Asynchronous Image loading
+ - Memory Level caching
+ - Disk Level caching.
  
  To attain above features following libraries is used:
 -Retrofit2
